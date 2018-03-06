@@ -22,7 +22,7 @@ git push                          //远程操作同步
 
 git push origin --delete foo      //删除远程foo分支(前提为:不是默认分支)
 
-git filter-branch --tree-filter 'rm -f sdram.c' HEAD     //删除本地的制定文件
+git filter-branch --tree-filter 'rm -f sdram.c' HEAD     //删除本地的指定文件
 
 使用强制push的方法：
 git push -u origin master -f
