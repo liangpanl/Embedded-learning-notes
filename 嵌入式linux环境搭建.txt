@@ -1,0 +1,13 @@
+环境搭建流程：
+linux内核下载地址：https://www.kernel.org/pub/linux/kernel/v2.6/
+
+windows下要安装的软件：
+1.安装cuteftp破解版，文件在百度云window文件夹中。然后从linux虚拟机中下载linux内核
+2，安装source insight ，其注册码是SI3US-361500-17409。工程建立参考韦东山的书。
+3，安装secureCRT，破解文件在百度云window文件夹中。mobaxterm和其功能一样
+4，安装tftpd32，文件所在位置同上。
+5，安装串口驱动，在window文件夹中。
+6，安装jtag驱动。需要禁止驱动程序签名
+7，安装eop调试工具openocd 即可使用。用于下载裸机程序或u-boot
+8，从norflash重启u-boot，在串口工具中按空格，进入下载选项
+9，安装usb驱动，软件在E:\Linux开发\烧写工具\系统文件\dnw\windows版\zadig-2.3.exe,再运行dnw_100ask.exe下载文件

@@ -1,0 +1,28 @@
+git init                          //初始化一个git仓库
+git clone https://...             //从远程仓库克隆到本地
+git status                        //查看仓库状态
+git add <文件名>                  //将文件提交到暂存区
+git add .                         //表示所有修改的文件都添加
+.gitignore                        //在此文件夹中放入忽略提交的文件
+git checkout <文件名>             //在没有添加之前,对修改的文件撤销
+git commit -m '文档说明'          //将文件提交到本地仓库
+git diff <文件名>                 //查看文档修改前后的不同
+git reset HEAD <文件名>           //撤销已添加的文件
+git remote add origin https://... //给远程仓库取别名为origin
+git remote remove origin          //删除远程仓库的别名
+git push origin master            //将本地master分支推送到远程origin
+git push origin master:foo        //将本地master分支推送到远程origin的foo分支
+git push origin :foo              //删除远程origin的foo分支
+git branch -a                     //查看所有分支
+git remote -v                     //查看别名和远程仓库对应情况
+
+git rm <文件名>                   //删除文件
+git commit -m '删除'              //提交操作
+git push                          //远程操作同步
+
+git push origin --delete foo      //删除远程foo分支(前提为:不是默认分支)
+
+git filter-branch --tree-filter 'rm -f sdram.c' HEAD     //删除本地的制定文件
+
+使用强制push的方法：
+git push -u origin master -f
