@@ -1,0 +1,152 @@
+以下操作按顺序执行
+
+cd ~
+mkdir openocd
+cd openocd
+git clone git://openocd.git.sourceforge.net/gitroot/openocd/openocd
+sudo apt-get upgrade(可选)
+
+//一些依赖的安装
+sudo apt-get install libusb-1.0-0-dev
+sudo apt-get install libftdi-dev
+sudo apt-get install libtool
+sudo apt-get install automake
+sudo apt-get install libhidapi-dev
+
+sudo apt-get install libusb++-dev
+sudo dpkg --get-selections 用该命令列出安装了哪些包，在用下面的命令删除
+sudo apt-get --purge remove libusb++-dev    //卸载软件可用该命令
+
+sudo ./bootstrap
+sudo ./configure --enable-ftdi --enable-openjtag --enable-cmsis-dap
+sudo make
+sudo make install
+cd contrib/
+sudo cp  60-openocd.rules /etc/udev/rules.d/
+
+//输出版本信息  官网：http://openocd.org/
+openocd -v
+
+得到udev
+wget http://www.us.kernel.org/pub/linux/utils/kernel/hotplug/udev-100.tar.bz2 
+
+dmesg 查看usb等信息
+lsusb 查看usb id    用这些信息配置openocd.cfg(自己在安装目录下创建)
+该目录下有百问网的openjtag接口配置文件：/work/tools/openocd/tcl/interface/ftdi
+
+切换到root用户：sudo -s
+配置vim：curl https://j.mp/spf13-vim3 -L > spf13-vim.sh && sh spf13-vim.sh 
+
+安装arm交叉编译链
+下载地址：https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads（不能编译操作系统）
+http://www.arm9.net/download.asp     //友善之臂下载地址
+完成之后解压，配置bin目录的环境变量。即可使用
+回显：echo $PATH 查看环境变量是否配置成功。
+不能正常运行，这是因为64位的系统缺少32位的库导致的。
+解决办法：
+    sudo apt-get update
+    sudo apt-get install lib32z1
+可用的谷歌镜像https://so.coms.one/
+更新所有的软件：sudo apt-get dist-upgrade
+
+arm-linux-gdb安装步骤
+前提：  sudo apt-get install texinfo
+	sudo apt-get install libncurses5-dev 
+	sudo apt-get install m4
+	sudo apt-get install flex
+	sudo apt-get install bison
+下载地址：http://ftp.gnu.org/gnu/gdb/（可下载最新版本）
+1、解压安装包：tar -zxvf gdb-8.1.tar.gz 
+2、cd gdb-8.1/
+3、./configure --target=arm-linux --prefix=/usr/local/arm-gdb -v
+   target指明编译生成的GDB用于调试ARM-LINUX程序,prefix指明安装目录
+4、make
+5、sudo make install
+6、sudo vi /etc/environment 在该文件末尾加入":/usr/local/arm-gdb/bin"
+7、source /etc/environment  更新环境变量
+
+
+安装Eclipse
+(1)安装sun java  （下载地址 http://www.oracle.com/technetwork/java/javase/downloads/index.html）
+下载jre和jdk
+1、jre安装：
+解压jre：tar -zxvf jre-9.0.4_linux-x64_bin.tar.gz 
+解压jdk：tar -zxvf jdk-9.0.4_linux-x64_bin.tar.gz
+cd /usr/lib
+sudo mkdir java
+sudo mv jre-9.0.4 /work/tools   将解压好的jre移动到/work/tools文件夹中
+sudo mv jdk-9.0.4 /work/tools
+sudo gedit /etc/profile       配置环境变量
+在其中加入：
+export JAVA_HOME=/work/tools/jdk-9.0.4
+export JAVA_JRE=$JAVA_HOME/jre-9.0.4
+export PATH=$PATH:/work/tools/4.4.3/bin:/usr/local/arm-gdb/bin:$JAVA_HOME/bin
+export PATH=$PATH:$JAVA_HOME/lib:JAVA_JRE/lib:$JAVA_JRE/bin
+
+source /etc/environment          重载环境变量
+sudo update-alternatives --install /usr/bin/java java /usr/lib/java/jre-9.0.4/bin/java 300
+sudo update-alternatives --config java  （只有一个java就不会让选择）
+java -version 验证是否安装成功
+
+(2)安装eclipse   （下载地址：http://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/oxygen2）
+tar -zxvf eclipse-cpp-oxygen-2-linux-gtk-x86_64.tar.gz     解压
+sudo mv eclipse /usr/lib
+sudo gedit /usr/share/applications/eclipse.desktop         创建快捷方式
+内容如下：
+[Desktop Entry]
+Name=eclipse
+Comment=eclipse
+Exec= /usr/lib/eclipse/eclipse 为了菜单栏的出现此处更改为脚本路径：home/book/eclipse
+Icon=/usr/lib/eclipse/icon.xpm
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Accessibility;Utility;
+OnlyShowIn=Unity;
+
+由于没有菜单在home/book/下创建eclipse脚本
+内容为：
+#!/bin/bash
+export UBUNTU_MENUPROXY=0
+/usr/lib/eclipse/eclipse    定位到可执行文件
+为eclipse安装嵌入式插件 输入网址http://opensource.zylin.com/zylincdt
+
+/////////////////////////////////////////////////////////////////////////////////////////可以不用这样安装
+安装openocd
+1、安装node.js作为npm的运行环境： 
+sudo apt-get install nodejs
+2、安装npm（node包管理器）：
+sudo apt-get install npm
+///////////////////////////////以上出现问题，重新来
+
+到git去clone：
+sudo git clone https://github.com/nodejs/node.git
+cd node
+sudo ./configure
+sudo make
+sudo make install         //搞完之后npm也安好了
+/////////////////////////////////////////////失败╥﹏╥
+
+到nodejs官网下载安装包：xxx.tar.xz
+解压.tar.xz文件：先 xz -d xxx.tar.xz 将 xxx.tar.xz解压成 xxx.tar 然后，再用 tar xvf xxx.tar来解包
+sudo ln -s /home/asfd/opt/node-v8.10.0-linux-x64/bin/node /usr/bin/node  //为npm的执行，创建符号链接
+
+3、xPacks是C/C++通用软件包，需要用xpm安装，而xpm要用npm来安装
+全局安装xpm:
+sudo ./npm install xpm -g --unsafe-perm（卸载命令：sudo npm uninstall xpm --global）
+安装完成后全部在node的bin目录下。
+4、用xpm安装openocd
+先通过npm安装lzma-native，拷贝到xpm的model目录下
+再用sudo ./xpm install @gnu-mcu-eclipse/openocd --global
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+安装openocd
+解压到home/opt中
+tar xvf gnu-mcu-eclipse-openocd-0.10.0-7-20180123-1217-centos64.tgz
+拷贝文件
+sudo cp ~/opt/gnu-mcu-eclipse/openocd/0.10.0-7-20180123-1217/contrib/60-openocd.rules /etc/udev/rules.d
+重新加载规则：sudo udevadm control --reload-rules
+
+让所有用户以sudo启动openocd
+sudo usermod -aG plugdev $USER
+
